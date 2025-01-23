@@ -8,21 +8,17 @@ node {
             sh './jenkins/scripts/test.sh'
         }
         stage('Manual Approval'){
-            input message: 'Lanjut ke tahap Deploy? (Klik "Proceed untuk lanjutkan")'
-        }
-        stage('Deploy') {
             sh 'rm -rf build/'
             
             sh './jenkins/scripts/deliver.sh'
             
-            input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
-            
-            sh './jenkins/scripts/kill.sh'
-
+            input message: 'Lanjut ke tahap Deploy? (Klik "Proceed untuk lanjutkan")'
+        }
+        stage('Deploy') {
             sshagent(['SSH_GCP_JENKINS']) {
                 sh '''
                 echo "Starting deployment to Cloud..."
-                scp -o StrictHostKeyChecking=no -r builds/ fadlinarsin12@35.226.98.155:~/react-app
+                scp -o StrictHostKeyChecking=no -r build/ fadlinarsin12@35.226.98.155:~/react-app
                 '''
             }
             
