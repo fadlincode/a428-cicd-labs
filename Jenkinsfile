@@ -1,6 +1,7 @@
 node {
     docker.image('node:16-buster-slim').inside('-p 3000:3000') {
         stage('Build') {
+            checkout scm
             sh 'npm install'
         }
         stage('Test') {
@@ -10,8 +11,20 @@ node {
             input message: 'Lanjut ke tahap Deploy? (Klik "Proceed untuk lanjutkan")'
         }
         stage('Deploy') {
+            sh 'rm -rf build/'
+            
             sh './jenkins/scripts/deliver.sh'
+            
+            input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)' 
+            
             sh './jenkins/scripts/kill.sh'
+
+            sshagent(['SSH_GCP_JENKINS']) {
+                sh '''
+                echo "Starting deployment to Cloud..."
+                scp -o StrictHostKeyChecking=no -r builds/ fadlinarsin12@35.226.98.155:~/react-app
+                '''
+            }
             
             // sleep 60s
             sleep 60
