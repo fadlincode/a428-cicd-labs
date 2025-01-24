@@ -1,5 +1,5 @@
 node {
-    docker.image('node:16-alpine').inside('-p 3000:3000') {
+    docker.image('node:16-bullseye').inside('-p 3000:3000') {
         stage('Build') {
             checkout scm
             sh 'npm install'
