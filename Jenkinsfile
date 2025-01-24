@@ -11,10 +11,12 @@ node {
             sh 'rm -rf build/'
             
             sh './jenkins/scripts/deliver.sh'
-            
+
             input message: 'Lanjut ke tahap Deploy? (Klik "Proceed untuk lanjutkan")'
         }
         stage('Deploy') {
+            sh './jenkins/scripts/kill.sh'
+            
             sshagent(['SSH_GCP_JENKINS']) {
                 sh '''
                 echo "Starting deployment to Cloud..."
